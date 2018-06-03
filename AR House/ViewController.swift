@@ -26,7 +26,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecognizerDe
     let scale: Float = 0.01
     
     // Position to set model properly
-    let position = SCNVector3(0, -2, -10)
+    let position = SCNVector3(0, 0, -10)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +43,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecognizerDe
         // Enable default lighting
         sceneView.autoenablesDefaultLighting = true
         
+        // Add tap and swipe gesture recognizers
+        addGestureRecognizers()
+}
+    
+    // Add tap and swipe gesture recognizers
+    func addGestureRecognizers() {
         // Add tap gesture recognizer
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.tapHandler(_:)))
         tap.delegate = self
@@ -108,7 +114,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecognizerDe
         let cameraNode = sceneView.pointOfView!
         
         // Set a node where a camera is
-        node.transform = cameraNode.transform
+        node.position = cameraNode.position
+        
+        // Set a node Y rotation similar to camera's
+        node.rotation.y = cameraNode.rotation.y
         
         // Shrink the node 100 times
         node.scale = SCNVector3(scale, scale, scale)
