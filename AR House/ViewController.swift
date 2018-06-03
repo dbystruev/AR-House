@@ -5,6 +5,8 @@
 //  Created by Denis Bystruev on 03/06/2018.
 //  Copyright © 2018 Denis Bystruev. All rights reserved.
 //
+//  The house model is by Denniswoo1993 (https://www.turbosquid.com/Search/Artists/denniswoo1993)
+//  from https://www.turbosquid.com/3d-models/free-3ds-mode-dreamhome-architectural-assets/1125654
 
 import UIKit
 import SceneKit
