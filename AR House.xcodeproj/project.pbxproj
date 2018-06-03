@@ -13,6 +13,7 @@
 		69B12A4120C3BD170027A417 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 69B12A3F20C3BD170027A417 /* Main.storyboard */; };
 		69B12A4320C3BD1B0027A417 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 69B12A4220C3BD1B0027A417 /* Assets.xcassets */; };
 		69B12A4620C3BD1B0027A417 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 69B12A4420C3BD1B0027A417 /* LaunchScreen.storyboard */; };
+		69B12A4E20C3D1680027A417 /* SCNVector3Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B12A4D20C3D1680027A417 /* SCNVector3Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		69B12A4220C3BD1B0027A417 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		69B12A4520C3BD1B0027A417 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		69B12A4720C3BD1B0027A417 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		69B12A4D20C3D1680027A417 /* SCNVector3Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SCNVector3Extension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 				69B12A3920C3BD170027A417 /* AppDelegate.swift */,
 				69B12A3B20C3BD170027A417 /* art.scnassets */,
 				69B12A3D20C3BD170027A417 /* ViewController.swift */,
+				69B12A4D20C3D1680027A417 /* SCNVector3Extension.swift */,
 				69B12A3F20C3BD170027A417 /* Main.storyboard */,
 				69B12A4220C3BD1B0027A417 /* Assets.xcassets */,
 				69B12A4420C3BD1B0027A417 /* LaunchScreen.storyboard */,
@@ -140,6 +143,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				69B12A3E20C3BD170027A417 /* ViewController.swift in Sources */,
+				69B12A4E20C3D1680027A417 /* SCNVector3Extension.swift in Sources */,
 				69B12A3A20C3BD170027A417 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -287,6 +291,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8J39KF9DMS;
 				INFOPLIST_FILE = "AR House/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -305,6 +310,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8J39KF9DMS;
 				INFOPLIST_FILE = "AR House/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
