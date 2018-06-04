@@ -49,26 +49,29 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecognizerDe
     
     // Add tap and swipe gesture recognizers
     func addGestureRecognizers() {
+        // Add pan gesture recognizer
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(panHandler(_:)))
+        pan.delegate = self
+        sceneView.addGestureRecognizer(pan)
+        
         // Add tap gesture recognizer
-        let tap = UITapGestureRecognizer(target: self, action: #selector(self.tapHandler(_:)))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(tapHandler(_:)))
         tap.delegate = self
         sceneView.addGestureRecognizer(tap)
+    }
+    
+    // Handle pan gesture
+    @objc func panHandler(_ recognizer: UIPanGestureRecognizer) {
+        let translation = recognizer.translation(in: sceneView)
+        print(#function, translation.x, translation.y)
         
-        // Add swipe gesture recognizers
-        for direction in [UISwipeGestureRecognizerDirection.left, .right, .up, .down] {
-            addSwipeGestureRecognizer(for: direction)
-        }
+        rotateHouse(by: Float(translation.x) / 100)
+        moveHouse(by: -Float(translation.y) / 100)
+        
+        recognizer.setTranslation(.zero, in: sceneView)
     }
     
-    // Add tap gesture recognizer for certain direction
-    func addSwipeGestureRecognizer(for direction: UISwipeGestureRecognizerDirection) {
-        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeHandler(_:)))
-        swipe.delegate = self
-        swipe.direction = direction
-        sceneView.addGestureRecognizer(swipe)
-    }
-    
-   // Handle tap gestures
+    // Handle tap gestures
     @objc func tapHandler(_ gestureRecognizer: UITapGestureRecognizer) {
         if gestureRecognizer.state == .ended {
             if house_shown {
@@ -79,29 +82,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecognizerDe
             
             // Revert the house is shown flag
             house_shown = !house_shown
-        }
-    }
-    
-    // Handle swipe gestures
-    @objc func swipeHandler(_ gestureRecognizer: UISwipeGestureRecognizer) {
-        if gestureRecognizer.state == .ended {
-            switch gestureRecognizer.direction {
-            case .left:
-                // do nothing
-                print(#function, gestureRecognizer.direction)
-            case .right:
-                // do nothing
-                print(#function, gestureRecognizer.direction)
-            case .up:
-                // move house up by 1 meter
-                moveHouse(by: 1)
-            case .down:
-                // move house down by 1 meter
-                moveHouse(by: -1)
-            default:
-                // should not be here actually
-                print(#function, gestureRecognizer.direction)
-            }
         }
     }
     
@@ -145,6 +125,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecognizerDe
         // Find the node with the name
         if let node = sceneView.scene.rootNode.childNode(withName: nodeName, recursively: true) {
             node.position.y += delta
+        }
+    }
+    
+    // Rotate house around vertical (Y) axis
+    func rotateHouse(by angle: Float) {
+        // Find the node with the name
+        if let node = sceneView.scene.rootNode.childNode(withName: nodeName, recursively: true) {
+            node.eulerAngles.y += angle
         }
     }
     
