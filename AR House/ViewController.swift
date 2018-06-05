@@ -12,7 +12,7 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecognizerDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UIGestureRecognizerDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     
@@ -25,8 +25,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecognizerDe
     // Scale to take the model back to normal size
     let scale: Float = 0.01
     
-    // Position to set model properly
-    let position = SCNVector3(0, 0, -10)
+    // Distance from the viewer in meters
+    let distance: Float = 10
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,7 +45,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecognizerDe
         
         // Add tap and swipe gesture recognizers
         addGestureRecognizers()
-}
+    }
     
     // Add tap and swipe gesture recognizers
     func addGestureRecognizers() {
@@ -53,6 +53,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecognizerDe
         let pan = UIPanGestureRecognizer(target: self, action: #selector(panHandler(_:)))
         pan.delegate = self
         sceneView.addGestureRecognizer(pan)
+        
+        // Add pinch handler recognizer
+        let pinch = UIPinchGestureRecognizer(target: self, action: #selector(pinchHandler(_:)))
+        pinch.delegate = self
+        sceneView.addGestureRecognizer(pinch)
         
         // Add tap gesture recognizer
         let tap = UITapGestureRecognizer(target: self, action: #selector(tapHandler(_:)))
@@ -63,12 +68,35 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecognizerDe
     // Handle pan gesture
     @objc func panHandler(_ recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: sceneView)
-        print(#function, translation.x, translation.y)
         
         rotateHouse(by: Float(translation.x) / 100)
         moveHouse(by: -Float(translation.y) / 100)
         
         recognizer.setTranslation(.zero, in: sceneView)
+    }
+    
+    // Handle pinch gesture
+    @objc func pinchHandler(_ recognizer: UIPinchGestureRecognizer) {
+        let scale = Float(1 / recognizer.scale)
+        
+        // Find the node with the house name
+        if let node = sceneView.scene.rootNode.childNode(withName: nodeName, recursively: true),
+            let pov = sceneView.pointOfView {
+            
+            // Original (camera) position
+            let x1 = pov.position.x
+            let z1 = pov.position.z
+            
+            // Target (house) position
+            let x2 = node.position.x
+            let z2 = node.position.z
+            
+            // Get the house new position
+            node.position.x = x1 + scale * (x2 - x1)
+            node.position.z = z1 + scale * (z2 - z1)
+        }
+        
+        recognizer.scale = 1
     }
     
     // Handle tap gestures
@@ -88,33 +116,34 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecognizerDe
     /// Add a house from DAE file to the scene
     func addHouse() {
         // Create a node from DAE file
-        let node = SCNScene(named: "art.scnassets/Dreamhome Example 1.dae")!.rootNode.clone()
+        let house = House(fileName: "art.scnassets/Dreamhome Example 1.dae")
         
         // Get a camera node
         let cameraNode = sceneView.pointOfView!
         
         // Set a node where a camera is
-        node.position = cameraNode.position
+        house.position = cameraNode.position
         
         // Set a node Y rotation similar to camera's
-        node.rotation.y = cameraNode.rotation.y
+        house.rotation.y = cameraNode.rotation.y
         
         // Shrink the node 100 times
-        node.scale = SCNVector3(scale, scale, scale)
+        house.scale = SCNVector3(scale, scale, scale)
         
-       // Move a node to position the house properly
-        node.position = position
+        // Move a node to position the house properly
+        house.position.x -= distance * sin(house.rotation.y)
+        house.position.z += distance * cos(house.rotation.y) - distance
   
         // Name the node so we can find it later
-        node.name = nodeName
+        house.name = nodeName
         
         // Add a node to the scene
-        sceneView.scene.rootNode.addChildNode(node)
+        sceneView.scene.rootNode.addChildNode(house.node)
     }
     
     // Remove the house from the scene
     func removeHouse() {
-        // Find the node with the name
+        // Find the node with the house name
         if let node = sceneView.scene.rootNode.childNode(withName: nodeName, recursively: true) {
             node.removeFromParentNode()
         }
@@ -122,7 +151,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecognizerDe
     
     // Move house up and down (on Y axis)
     func moveHouse(by delta: Float) {
-        // Find the node with the name
+        // Find the node with the house name
         if let node = sceneView.scene.rootNode.childNode(withName: nodeName, recursively: true) {
             node.position.y += delta
         }
@@ -134,6 +163,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecognizerDe
         if let node = sceneView.scene.rootNode.childNode(withName: nodeName, recursively: true) {
             node.eulerAngles.y += angle
         }
+    }
+    
+    // Called every time when frame is updated
+    func session(_ session: ARSession, didUpdate frame: ARFrame) {
+//        print(#function, frame.camera.transform.columns)
     }
     
     override func viewWillAppear(_ animated: Bool) {
