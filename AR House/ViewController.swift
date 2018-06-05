@@ -17,7 +17,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
     @IBOutlet var sceneView: ARSCNView!
     
     // Name of the node with the house
-    let nodeName = "House"
+    let houseNodeName = "House"
     
     // True if the house is shown
     var house_shown = false
@@ -33,6 +33,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
         
         // Set the view's delegate
         sceneView.delegate = self
+        
+        // Set the sessions's delegate
+        sceneView.session.delegate = self
         
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
@@ -80,7 +83,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
         let scale = Float(1 / recognizer.scale)
         
         // Find the node with the house name
-        if let node = sceneView.scene.rootNode.childNode(withName: nodeName, recursively: true),
+        if let node = sceneView.scene.rootNode.childNode(withName: houseNodeName, recursively: true),
             let pov = sceneView.pointOfView {
             
             // Original (camera) position
@@ -115,36 +118,28 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
     
     /// Add a house from DAE file to the scene
     func addHouse() {
-        // Create a node from DAE file
-        let house = House(fileName: "art.scnassets/Dreamhome Example 1.dae")
+        // Create a house from DAE file
+        let house = House("art.scnassets/Dreamhome Example 1.dae")
         
-        // Get a camera node
-        let cameraNode = sceneView.pointOfView!
-        
-        // Set a node where a camera is
-        house.position = cameraNode.position
-        
-        // Set a node Y rotation similar to camera's
-        house.rotation.y = cameraNode.rotation.y
-        
-        // Shrink the node 100 times
+        // Shrink the house 100 times
         house.scale = SCNVector3(scale, scale, scale)
         
-        // Move a node to position the house properly
-        house.position.x -= distance * sin(house.rotation.y)
-        house.position.z += distance * cos(house.rotation.y) - distance
-  
-        // Name the node so we can find it later
-        house.name = nodeName
+        // Name the house node so we can find it later
+        house.name = houseNodeName
         
-        // Add a node to the scene
+        // Add the house before the camera at distance
+        if let cameraNode = sceneView.pointOfView {
+            house.simdPosition = cameraNode.simdWorldFront * distance
+        }
+        
+        // Add the house node to the scene
         sceneView.scene.rootNode.addChildNode(house.node)
     }
     
     // Remove the house from the scene
     func removeHouse() {
         // Find the node with the house name
-        if let node = sceneView.scene.rootNode.childNode(withName: nodeName, recursively: true) {
+        if let node = sceneView.scene.rootNode.childNode(withName: houseNodeName, recursively: true) {
             node.removeFromParentNode()
         }
     }
@@ -152,7 +147,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
     // Move house up and down (on Y axis)
     func moveHouse(by delta: Float) {
         // Find the node with the house name
-        if let node = sceneView.scene.rootNode.childNode(withName: nodeName, recursively: true) {
+        if let node = sceneView.scene.rootNode.childNode(withName: houseNodeName, recursively: true) {
             node.position.y += delta
         }
     }
@@ -160,15 +155,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
     // Rotate house around vertical (Y) axis
     func rotateHouse(by angle: Float) {
         // Find the node with the name
-        if let node = sceneView.scene.rootNode.childNode(withName: nodeName, recursively: true) {
+        if let node = sceneView.scene.rootNode.childNode(withName: houseNodeName, recursively: true) {
             node.eulerAngles.y += angle
         }
     }
     
     // Called every time when frame is updated
-    func session(_ session: ARSession, didUpdate frame: ARFrame) {
-//        print(#function, frame.camera.transform.columns)
-    }
+//    func session(_ session: ARSession, didUpdate frame: ARFrame) {
+//    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

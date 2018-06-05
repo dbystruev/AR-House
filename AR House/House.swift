@@ -11,6 +11,33 @@ import ARKit
 class House {
     let node: SCNNode
     
+    var eulerAngles: SCNVector3 {
+        get {
+            return node.eulerAngles
+        }
+        set {
+            node.eulerAngles = newValue
+        }
+    }
+    
+    var geometry: SCNGeometry? {
+        get {
+            return node.geometry
+        }
+        set {
+            node.geometry = newValue
+        }
+    }
+    
+    var name: String? {
+        get {
+            return node.name
+        }
+        set {
+            node.name = newValue
+        }
+    }
+    
     var position: SCNVector3 {
         get {
             return node.position
@@ -38,16 +65,25 @@ class House {
         }
     }
     
-    var name: String? {
+    var simdPosition: simd_float3 {
         get {
-            return node.name
+            return node.simdPosition
         }
         set {
-            node.name = newValue
+            node.simdPosition = newValue
         }
     }
     
-    init(fileName: String) {
+    var worldPosition: SCNVector3 {
+        get {
+            return node.worldPosition
+        }
+        set {
+            node.worldPosition = newValue
+        }
+    }
+    
+    init(_ fileName: String = "") {
         if let node = SCNScene(named: fileName)?.rootNode.clone() {
             self.node = node
         } else {
