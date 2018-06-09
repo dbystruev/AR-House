@@ -16,20 +16,26 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
 
     @IBOutlet var sceneView: ARSCNView!
     
-    // Name of the node with the house
+    /// Distance from the viewer in meters
+    let distance: Float = 10
+    
+    /// Name of the node with the house
     let houseNodeName = "House"
     
-    // True if the house is shown
-    var house_shown = false
-    
-    // Scale to take the model back to normal size
-    let scale: Float = 0.01
-    
-    // Distance from the viewer in meters
-    let distance: Float = 10
+    /// True if the house is shown
+    var houseShown = false
+ 
+    /// Move the point inside the model around which it should rotate by this vector
+    let rotationPoint = SCNVector3(2, 0, -5)
+
+    /// Scale to take the model back to normal size
+    let houseScale: Float = 0.01
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Show the starting coordinates
+//        sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin]
         
         // Set the view's delegate
         sceneView.delegate = self
@@ -38,7 +44,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
         sceneView.session.delegate = self
         
         // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
+//        sceneView.showsStatistics = true
         
         // Load the empty scene to the view
         sceneView.scene = SCNScene()
@@ -50,7 +56,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
         addGestureRecognizers()
     }
     
-    // Add tap and swipe gesture recognizers
+    /// Add tap and swipe gesture recognizers
     func addGestureRecognizers() {
         // Add pan gesture recognizer
         let pan = UIPanGestureRecognizer(target: self, action: #selector(panHandler(_:)))
@@ -68,7 +74,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
         sceneView.addGestureRecognizer(tap)
     }
     
-    // Handle pan gesture
+    /// Handle pan gesture
     @objc func panHandler(_ recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: sceneView)
         
@@ -78,7 +84,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
         recognizer.setTranslation(.zero, in: sceneView)
     }
     
-    // Handle pinch gesture
+    /// Handle pinch gesture
     @objc func pinchHandler(_ recognizer: UIPinchGestureRecognizer) {
         let scale = Float(1 / recognizer.scale)
         
@@ -102,17 +108,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
         recognizer.scale = 1
     }
     
-    // Handle tap gestures
+    /// Handle tap gestures
     @objc func tapHandler(_ gestureRecognizer: UITapGestureRecognizer) {
         if gestureRecognizer.state == .ended {
-            if house_shown {
+            if houseShown {
                 removeHouse()
             } else {
                 addHouse()
             }
             
             // Revert the house is shown flag
-            house_shown = !house_shown
+            houseShown = !houseShown
         }
     }
     
@@ -121,8 +127,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
         // Create a house from DAE file
         let house = House("art.scnassets/Dreamhome Example 1.dae")
         
+        // Move house rotation point
+        house.moveHouseRotationPoint(by: rotationPoint / houseScale)
+        
         // Shrink the house 100 times
-        house.scale = SCNVector3(scale, scale, scale)
+        house.scale = SCNVector3(houseScale, houseScale, houseScale)
         
         // Name the house node so we can find it later
         house.name = houseNodeName
@@ -136,7 +145,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
         sceneView.scene.rootNode.addChildNode(house.node)
     }
     
-    // Remove the house from the scene
+    /// Remove the house from the scene
     func removeHouse() {
         // Find the node with the house name
         if let node = sceneView.scene.rootNode.childNode(withName: houseNodeName, recursively: true) {
@@ -144,7 +153,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
         }
     }
     
-    // Move house up and down (on Y axis)
+    /// Move house up and down (on Y axis)
     func moveHouse(by delta: Float) {
         // Find the node with the house name
         if let node = sceneView.scene.rootNode.childNode(withName: houseNodeName, recursively: true) {
@@ -152,7 +161,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
         }
     }
     
-    // Rotate house around vertical (Y) axis
+    /// Rotate house around vertical (Y) axis
     func rotateHouse(by angle: Float) {
         // Find the node with the name
         if let node = sceneView.scene.rootNode.childNode(withName: houseNodeName, recursively: true) {
