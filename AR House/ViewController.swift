@@ -56,7 +56,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
         addGestureRecognizers()
     }
     
-    /// Add tap and swipe gesture recognizers
+    /// Add pan, pinch, and tap gesture recognizers
     func addGestureRecognizers() {
         // Add pan gesture recognizer
         let pan = UIPanGestureRecognizer(target: self, action: #selector(panHandler(_:)))
