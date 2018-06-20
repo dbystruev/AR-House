@@ -8,9 +8,10 @@
 //  The house model is by Denniswoo1993 (https://www.turbosquid.com/Search/Artists/denniswoo1993)
 //  from https://www.turbosquid.com/3d-models/free-3ds-mode-dreamhome-architectural-assets/1125654
 
-import UIKit
-import SceneKit
 import ARKit
+import Foundation
+import SceneKit
+import UIKit
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UIGestureRecognizerDelegate {
 
@@ -128,7 +129,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, UI
         let house = House("art.scnassets/Dreamhome Example 1.dae")
         
         // Move house rotation point
-        house.moveHouseRotationPoint(by: rotationPoint / houseScale)
+        house.moveHouseRotationPoint(by: rotationPoint / NSNumber(value: houseScale))
         
         // Shrink the house 100 times
         house.scale = SCNVector3(houseScale, houseScale, houseScale)

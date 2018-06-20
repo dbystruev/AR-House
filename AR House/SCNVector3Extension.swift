@@ -63,4 +63,8 @@ extension SCNVector3 {
     static func /=<T: NSNumber> (left: inout SCNVector3, right: T) {
         left = left / right
     }
+    
+    func lenght() -> Float {
+        return sqrtf(x * x + y * y + z * z)
+    }
 }
